@@ -18,6 +18,8 @@ ignore: |
   gardener/certificates/templates/
   gardener/extensions/templates/
   gardener/garden-content/templates/
+  gardener/garden-kubeconfig/templates/
+  gardener/garden/templates/
   hack/yake-controlplane-cert-extension/
   helmcharts/
   pre-gardener/dnsprovider/templates/

@@ -1,0 +1,3 @@
+output:
+  name: gardener-internal
+  namespace: flux-system

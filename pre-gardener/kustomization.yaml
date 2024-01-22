@@ -5,8 +5,8 @@ resources:
   - cert-manager.yaml
   - dnsprovider.yaml
   - external-dns-management.yaml
+  - gardener-operator.yaml
   - helmrepositories.yaml
-  - ingress-nginx.yaml
   - issuer.yaml
   - namespace.yaml
   - networkpolicies

@@ -3,15 +3,12 @@ kind: Kustomization
 resources:
   - certificates.yaml
   - cloudprofiles.yaml
-  - etcd.yaml
-  - etcd-events.yaml
   - extensions.yaml
-  - gardener.yaml
+  - garden.yaml
   - gardenlet.yaml
   - garden-content.yaml
-  - gardener-metrics-exporter.yaml
+  - garden-kubeconfig.yaml
   - identity.yaml
-  - kube-apiserver.yaml
   - networkpolicies
   - priorityclasses.yaml
   - webterminal.yaml

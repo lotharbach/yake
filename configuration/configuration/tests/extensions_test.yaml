@@ -180,6 +180,7 @@ tests:
     set:
       registryOverwrite:
         eu.gcr.io: myregistry.example.org/eu.gcr.io
+        europe-docker.pkg.dev: myregistry.example.org/europe-docker.pkg.dev
         registry.k8s.io: myregistry.example.org/registry.k8s.io
     asserts:
       - matchRegex:
@@ -192,7 +193,7 @@ tests:
                   repository: myregistry.example.org/eu.gcr.io/gardener-project/gardener/extensions/shoot-rsyslog-relp
                 imageVectorOverwrite: \|
                   [\s\S]*
-                    repository: myregistry.example.org/eu.gcr.io/gardener-project/3rd/alpine
+                    repository: myregistry.example.org/europe-docker.pkg.dev/gardener-project/releases/3rd/alpine
                   [\s\S]*
                     repository: myregistry.example.org/registry.k8s.io/pause
   - it: should render os-coreos with registryOverwrite

@@ -6,13 +6,13 @@ metadata:
 spec:
   kubeConfig:
     secretRef:
-      name: gardener-internal-kubeconfig
+      name: gardener-internal
+      key: kubeconfig
   interval: 1m
   targetNamespace: flux-system
   dependsOn:
     - name: configuration
-    - name: gardener-application
-    - name: gardener-runtime
+    - name: garden
   chart:
     spec:
       chart: cloudprofiles

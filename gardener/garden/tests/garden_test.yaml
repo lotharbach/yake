@@ -1,0 +1,54 @@
+templates:
+  - garden.yaml
+tests:
+  - it: should create a garden named after the default garden-cluster-identity
+    asserts:
+      - containsDocument:
+          apiVersion: operator.gardener.cloud/v1alpha1
+          kind: Garden
+          name: garden-cluster-identity
+        documentIndex: 0
+      - equal:
+          path: spec
+          value:
+            runtimeCluster:
+              ingress:
+                controller:
+                  kind: nginx
+                domain: garden.mydomain.example.org
+              networking:
+                nodes: 172.18.0.0/16
+                pods: 10.1.0.0/16
+                services: 10.2.0.0/16
+              settings:
+                topologyAwareRouting:
+                  enabled: false
+                verticalPodAutoscaler:
+                  enabled: true
+            virtualCluster:
+              dns:
+                domains:
+                  - api.mydomain.example.org
+              etcd:
+                events:
+                  storage:
+                    capacity: 10Gi
+                main:
+                  storage:
+                    capacity: 25Gi
+              gardener:
+                clusterIdentity: garden-cluster-identity
+              kubernetes:
+                kubeAPIServer:
+                  oidcConfig:
+                    clientID: kube-kubectl
+                    groupsClaim: groups
+                    issuerURL: https://identity.mydomain.example.org/oidc
+                    usernameClaim: email
+                version: 1.26.1
+              maintenance:
+                timeWindow:
+                  begin: 220000+0100
+                  end: 230000+0100
+              networking:
+                services: 100.64.0.0/13

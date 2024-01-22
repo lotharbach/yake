@@ -1,0 +1,16 @@
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: virtual-garden-etcd-main-backup-local
+#   namespace: garden
+# type: Opaque
+# stringData:
+#   hostPath: "/etc/gardener/local-backupbuckets"
+# ---
+apiVersion: operator.gardener.cloud/v1alpha1
+kind: Garden
+metadata:
+  name: {{ .Values.virtualCluster.gardener.clusterIdentity }}
+spec:
+  {{ .Values | toYaml | nindent 2 }}

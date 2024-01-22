@@ -1,3 +1,11 @@
+{{- define "garden.ingressDomain" -}}
+{{- if (.Values.domains.garden).ingressDomain }}
+{{- .Values.domains.garden.ingressDomain }}
+{{- else }}
+{{- (print "garden." .Values.domains.global.domain) }}
+{{- end }}
+{{- end -}}
+
 {{- define "gardenlet.ingressDomain" -}}
 {{- if (.Values.domains.gardenlet).ingressDomain }}
 {{- .Values.domains.gardenlet.ingressDomain }}

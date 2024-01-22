@@ -12,6 +12,20 @@ tests:
           value: |-
             backups:
               enabled: false
+            gardener:
+              defaultDomains:
+                - domain: mydomain.example.org
+                  provider: example
+                  credentials:
+                    token: example
+              internalDomain:
+                domain: internal.mydomain.example.org
+                provider: example
+                credentials:
+                  token: example
+            gardenlet:
+              bootstrapTokenId: bootstrapTokenId
+              bootstrapTokenSecret: bootstrapTokenSecret
   - it: should contain backup config with backup enabled/credentials
     values:
       - ../values-test.yaml
@@ -26,3 +40,14 @@ tests:
               credentials:
                 foo: bar
               enabled: true
+            gardener:
+              defaultDomains:
+                - domain: mydomain.example.org
+                  provider: example
+                  credentials:
+                    token: example
+              internalDomain:
+                domain: internal.mydomain.example.org
+                provider: example
+                credentials:
+                  token: example

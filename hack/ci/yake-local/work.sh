@@ -309,16 +309,16 @@ _patch_ccm() {
 
 _ensure_hosts() {
   _print_heading "Ensure Hosts"
-  printf ">>> waiting for hr gardener-runtime "
-  until $KUBECTL get hr gardener-runtime -n flux-system >/dev/null 2>&1; do
+  printf ">>> waiting for hr garden "
+  until $KUBECTL get hr garden -n flux-system >/dev/null 2>&1; do
     printf .
     sleep 3
   done
 
-  $KUBECTL wait --for=condition=ready -n flux-system hr gardener-runtime --timeout=10m
+  $KUBECTL wait --for=condition=ready -n flux-system hr garden --timeout=10m
   echo " ok"
 
-  garden_ingress_ip=$($KUBECTL get svc -n garden garden-ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+  garden_ingress_ip=$($KUBECTL get svc -n virtual-garden-istio-ingress istio-ingressgateway -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
 
 	if [[ -v CI ]]; then
 			{
@@ -344,7 +344,10 @@ _ensure_hosts() {
 
 _create_rbac () {
   _print_heading "Create Rbac"
-  $KUBECTL get secrets -n garden garden-kubeconfig-for-admin -o go-template='{{.data.kubeconfig | base64decode }}' > "$VGARDEN_KUBECONFIG"
+  $KUBECTL get secrets -n garden gardener-internal -o go-template='{{.data.kubeconfig | base64decode }}' > "$VGARDEN_KUBECONFIG"
+
+  # FIXME
+  KUBECONFIG="$VGARDEN_KUBECONFIG" $KUBECTL config set clusters.garden.server https://gardener.api.local.gardener.cloud
 
   KUBECONFIG="$VGARDEN_KUBECONFIG" $KUBECTL apply -f garden-content/cloudprofile-local.yaml
   KUBECONFIG="$VGARDEN_KUBECONFIG" $KUBECTL apply -f garden-content/controller-registrations.yaml

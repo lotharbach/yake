@@ -11,8 +11,7 @@ spec:
     - name: configuration
     - name: certificates
     - name: garden-content
-    - name: gardener-application
-    - name: gardener-runtime
+    - name: garden
   chart:
     spec:
       chart: gardenlet

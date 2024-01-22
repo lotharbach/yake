@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gardener-operator-base-values
+  namespace: flux-system
+type: Opaque
+stringData:
+  values.yaml: |-
+    replicaCount: 1

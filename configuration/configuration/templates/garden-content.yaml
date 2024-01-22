@@ -9,3 +9,11 @@ stringData:
   values.yaml: |-
     backups:
       {{- toYaml .Values.backups | nindent 6 }}
+    gardener:
+      defaultDomains:
+        {{- include "gardener.defaultDomains" . | nindent 8 }}
+      internalDomain:
+        {{- include "gardener.internalDomain" . | nindent 8 }}
+    gardenlet:
+      bootstrapTokenId: {{ .Values.gardenlet.bootstrapTokenId }}
+      bootstrapTokenSecret: {{ .Values.gardenlet.bootstrapTokenSecret }}

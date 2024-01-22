@@ -1,9 +1,4 @@
 .github/gardener-kubeconfig.yaml
-23ke-charts-dev
-flux_*
 *.DS_STORE*
-config.yaml
 **/secrets/**
 .idea/
-23kectl
-log.txt

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: garden-kubeconfig
+description: A Helm chart to copy the gardener-internal kubeconfig to the flux-system namespace
+
+type: application
+
+version: 0.0.1

@@ -17,6 +17,7 @@ stringData:
         apiServerUrl: https://{{ include "api.domain" . }}/
         sessionSecret: {{ .Values.dashboard.sessionSecret }}
         ingress:
+          ingressClassName: nginx-ingress-gardener
           hosts:
           - {{ include "dashboard.domain" . }}
           annotations:

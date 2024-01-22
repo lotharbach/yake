@@ -9,8 +9,7 @@ spec:
   dependsOn:
     - name: configuration
     - name: certificates
-    - name: gardener-application
-    - name: gardener-runtime
+    - name: garden
   interval: 1m
   chart:
     spec:
@@ -47,12 +46,12 @@ spec:
       name: dashboard-values
       optional: true
     - kind: Secret
-      name: gardener-internal-kubeconfig
-      valuesKey: value
+      name: gardener-internal
+      valuesKey: kubeconfig
       targetPath: global.dashboard.kubeconfig
     - kind: Secret
-      name: gardener-internal-kubeconfig
-      valuesKey: value
+      name: gardener-internal
+      valuesKey: kubeconfig
       targetPath: global.bootstrapper.kubeconfig
     - kind: Secret
       name: gardener-ca-keypair
@@ -80,11 +79,11 @@ metadata:
 spec:
   kubeConfig:
     secretRef:
-      name: gardener-internal-kubeconfig
+      name: gardener-internal
+      key: kubeconfig
   targetNamespace: garden
   dependsOn:
-    - name: gardener-application
-    - name: gardener-runtime
+    - name: garden
   interval: 1m
   chart:
     spec:

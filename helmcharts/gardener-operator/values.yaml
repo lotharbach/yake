@@ -1,0 +1,80 @@
+additionalVolumeMounts: []
+additionalVolumes: []
+config:
+    controllers:
+        garden:
+            concurrentSyncs: 1
+            etcdConfig:
+                backupCompactionController:
+                    activeDeadlineDuration: 3h
+                    enableBackupCompaction: false
+                    eventsThreshold: 1e+06
+                    metricsScrapeWaitDuration: 60s
+                    workers: 3
+                custodianController:
+                    workers: 3
+                etcdController:
+                    workers: 3
+            syncPeriod: 1h
+        gardenCare:
+            conditionThresholds:
+                - duration: 1m
+                  type: RuntimeComponentsHealthy
+                - duration: 1m
+                  type: VirtualComponentsHealthy
+                - duration: 1m
+                  type: VirtualGardenAPIServerAvailable
+                - duration: 1m
+                  type: ObservabilityComponentsHealthy
+            syncPeriod: 1m
+        networkPolicy:
+            concurrentSyncs: 5
+        vpaEvictionRequirements:
+            concurrentSyncs: 5
+    debugging:
+        enableContentionProfiling: false
+        enableProfiling: false
+    featureGates:
+        DefaultSeccompProfile: true
+        HVPA: true
+    leaderElection:
+        leaderElect: true
+        leaseDuration: 15s
+        renewDeadline: 10s
+        resourceLock: leases
+        resourceName: gardener-operator-leader-election
+        resourceNamespace: garden
+        retryPeriod: 2s
+    logFormat: json
+    logLevel: info
+    runtimeClientConnection:
+        burst: 130
+        qps: 100
+    server:
+        healthProbes:
+            enable: true
+            port: 2751
+        metrics:
+            port: 2752
+        webhooks:
+            port: 2750
+    virtualClientConnection:
+        burst: 130
+        qps: 100
+env: []
+hostAliases: []
+image:
+    pullPolicy: IfNotPresent
+    repository: europe-docker.pkg.dev/gardener-project/releases/gardener/operator
+    tag: v1.97.1
+invalidateServiceAccountToken: true
+nodeToleration:
+    defaultNotReadyTolerationSeconds: 60
+    defaultUnreachableTolerationSeconds: 60
+replicaCount: 1
+resources:
+    requests:
+        cpu: 100m
+        memory: 100Mi
+revisionHistoryLimit: 2
+serviceAccountName: gardener-operator

@@ -9,7 +9,7 @@ spec:
       retries: 3
     createNamespace: true
   dependsOn:
-    - name: ingress-nginx
+    - name: gardener-operator
     - name: configuration
     - name: addons
   interval: 1m

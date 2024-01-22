@@ -1,0 +1,7 @@
+apiVersion: v2
+name: garden
+description: A Helm chart to manage the Garden CRD object
+
+type: application
+
+version: 0.0.1

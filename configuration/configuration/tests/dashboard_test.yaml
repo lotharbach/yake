@@ -17,6 +17,7 @@ tests:
                 apiServerUrl: https://api.mydomain.example.org/
                 sessionSecret: sessionSecret
                 ingress:
+                  ingressClassName: nginx-ingress-gardener
                   hosts:
                   - dashboard.mydomain.example.org
                   annotations:

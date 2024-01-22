@@ -11,8 +11,7 @@ spec:
   interval: 1m
   dependsOn:
     - name: configuration
-    - name: gardener-application
-    - name: gardener-runtime
+    - name: garden
   chart:
     spec:
       chart: gardener/extensions
