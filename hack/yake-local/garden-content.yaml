@@ -1,0 +1,97 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: yake-local-provider-local-deployment
+  namespace: yake
+spec:
+  interval: 1m0s
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  dependsOn:
+    - name: garden-ready
+  sourceRef:
+    kind: GitRepository
+    name: yake
+    namespace: yake
+  path: ./hack/provider-local
+  prune: false
+  patches:
+    - patch: |
+        $patch: delete
+        kind: ControllerRegistration
+        apiVersion: core.gardener.cloud/v1beta1
+        metadata:
+          name: provider-local
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: yake-local-provider-local-registration
+  namespace: yake
+spec:
+  interval: 1m0s
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  dependsOn:
+    - name: garden-ready
+    - name: yake-local-provider-local-deployment
+  sourceRef:
+    kind:  GitRepository
+    name: yake
+    namespace: yake
+  path: ./hack/provider-local
+  prune: false
+  patches:
+    - patch: |
+        $patch: delete
+        kind: ControllerDeployment
+        apiVersion: core.gardener.cloud/v1beta1
+        metadata:
+          name: provider-local
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: yake-local-garden-content
+  namespace: yake
+spec:
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  interval: 1m0s
+  dependsOn:
+    - name: garden-ready
+    - name: yake-local-provider-local-registration
+  sourceRef:
+    kind: GitRepository
+    name: yake
+    namespace: yake
+  path: ./hack/yake-local/garden-content/
+  prune: false
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: yake-local-garden-content-project-secretbinding
+  namespace: yake
+spec:
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  interval: 1m0s
+  dependsOn:
+    - name: garden-ready
+    - name: yake-local-garden-content
+  sourceRef:
+    kind: GitRepository
+    name: yake
+    namespace: yake
+  path: ./hack/yake-local/garden-content/project-secretbinding
+  prune: false

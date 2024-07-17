@@ -1,0 +1,63 @@
+gardener-extensions:
+  os-ubuntu:
+    version: 1.25.0
+  os-gardenlinux:
+    version: 0.24.0
+  os-coreos:
+    version: 1.22.0
+  provider-hcloud:
+    version: 0.6.28
+    admission:
+      enabled: false
+  provider-azure:
+    version: 1.44.1
+    admission:
+      enabled: true
+  provider-openstack:
+    version: 1.40.1
+    admission:
+      enabled: true
+  networking-calico:
+    version: 1.39.1
+  shoot-cert-service:
+    version: 1.44.0
+  shoot-dns-service:
+    version: 1.48.0
+    admission:
+      enabled: true
+    values:
+      dnsControllerManager:
+        deploy: true
+        image:
+          tag: v0.18.6 # renovate: datasource=github-releases depName=gardener/external-dns-management
+        configuration:
+          cacheTtl: 300
+          controllers: dnscontrollers,dnssources
+          dnsPoolResyncPeriod: 30m
+          serverPortHttp: 8080
+  shoot-oidc-service:
+    version: 0.26.0
+  shoot-networking-filter:
+    version: 0.18.0
+  shoot-networking-problemdetector:
+    version: 0.23.0
+  shoot-rsyslog-relp:
+    version: 0.4.4
+  networking-cilium:
+    version: 1.35.0
+  provider-alicloud:
+    version: 1.52.1
+  provider-aws:
+    version: 1.55.1
+    admission:
+      enabled: true
+  provider-gcp:
+    version: 1.36.2
+    admission:
+      enabled: true
+  runtime-gvisor:
+    version: 0.14.0
+  backup-s3:
+    version: 0.1.0
+  shoot-flux:
+    version: 0.5.0

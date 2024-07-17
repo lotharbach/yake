@@ -1,0 +1,46 @@
+yake:
+  sourceRef:
+    kind: GitRepository
+    name: yake
+    namespace: yake
+  interval: 10m
+  timeout: 30s
+  retryInterval: 30s
+  prune: false
+
+kustomizations:
+  cert-management: {}
+  cert-issuer:
+    dependsOn:
+    - cert-management
+    - dns-provider
+  cert-wildcard:
+    dependsOn:
+    - cert-issuer
+  dns-management: {}
+  dns-provider:
+    dependsOn:
+    - dns-management
+  gardener-extensions:
+    dependsOn:
+    - garden-ready
+  flux-system:
+    enabled: true
+    healthChecks:
+      disabled: true
+  gardener-operator: {}
+  garden-api-dns:
+    dependsOn:
+    - garden-ready
+    - dns-provider
+  gardenlet:
+    dependsOn:
+    - garden-ready
+  identity:
+    dependsOn:
+    - garden-ready
+  velero: {}
+  kyverno: {}
+  cloudprofiles:
+    dependsOn:
+    - garden-ready

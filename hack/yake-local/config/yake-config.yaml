@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: yake-config
+  namespace: yake
+type: Opaque
+stringData:
+  values.yaml: |
+    garden:
+      name: yake-local
+    cert-management:
+      enabled: true
+    dns-provider:
+      enabled: true
+      provider: rfc2136
+      credentials:
+        Server: knot.default.svc.cluster.local:53
+        TSIGKeyName: my-key.
+        TSIGSecret: Rw2NUXqO3z/SJBE8y8+vmJkBGJ0PPBtrDprww/b+Ik8=
+        TSIGSecretAlgorithm: hmac-sha256
+    dns-management:
+      enabled: true
+    cert-issuer:
+      enabled: true
+      issuer:
+        acme:
+          autoRegistration: true
+          email: dev@local.gardener.cloud
+          server: https://step-certificates.garden.svc.cluster.local/acme/acme/directory
+    cert-wildcard:
+      enabled: true
+    identity:
+      enabled: true
+    gardener-operator:
+      enabled: true
+    garden-api-dns:
+      enabled: true
+    garden-content:
+      enabled: true
+    gardener-extensions:
+      enabled:
+      - name: os-ubuntu
+      - name: os-gardenlinux
+      - name: networking-calico
+      - name: provider-azure
+    gardenlet:
+      enabled: true
+    velero:
+      enabled: true
+      provider: S3
+      bucketName: mybucket
+      credentials:
+        accessKeyID: bar
+        secretAccessKey: foo
+    kyverno:
+      enabled: true
+    cloudprofiles:
+      enabled:
+      - name: azure

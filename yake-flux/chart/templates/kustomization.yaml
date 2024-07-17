@@ -1,0 +1,42 @@
+{{- range $key, $value := .Values.kustomizations }}
+{{- if or (or (index $.Values $key).enabled $value.enabled) $.Values.debug }}
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: {{ $key }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  interval: {{ $.Values.yake.interval }}
+  timeout: {{ $.Values.yake.timeout }}
+  retryInterval: {{ $.Values.yake.retryInterval }}
+  sourceRef:
+{{ $.Values.yake.sourceRef | toYaml | indent 4 }}
+  path: ./{{ $key }}
+  prune: {{ $.Values.yake.prune }}
+  {{- if not ($value.healthChecks).disabled }}
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: {{ $key }}
+      namespace: {{ $value.namespace | default "yake" }}
+{{- end }}
+{{- /*
+If kyverno is enabled, we add a dependency to all other kustomizations so mutations
+can be added first and get applied to anything that gets installed later
+*/}}
+{{- if (or $value.dependsOn (and (not (eq $key "kyverno")) ($.Values.kyverno).enabled)) }}
+  dependsOn:
+{{- if (and (not (eq $key "kyverno")) ($.Values.kyverno).enabled) }}
+  - name: kyverno
+    namespace: yake
+{{- end }}
+{{- range $value.dependsOn }}
+{{- if not (or (or (index $.Values .).enabled $.Values.debug) (eq . "garden-ready")) }}
+{{- fail (print "dependency not enabled: " .) }}
+{{- end }}
+  - name: {{ . }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

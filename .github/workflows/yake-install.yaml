@@ -40,4 +40,4 @@ jobs:
         with:
           timeout_minutes: 20
           max_attempts: 3
-          command: cd hack/ci/yake-local && ./work.sh
+          command: ./hack/yake-local/work.sh

@@ -1,6 +1,0 @@
-backups:
-  enabled: false
-vpa:
-  enabled: false
-dashboard:
-  enabled: true

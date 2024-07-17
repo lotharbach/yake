@@ -1,0 +1,68 @@
+{{- range $k, $v := (index .Values "gardener-extensions") }}
+{{- if not (eq $k "enabled") }}
+{{- if $v.enabled }}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gardener-extension-{{ $k }}
+  namespace: yake
+spec:
+  install:
+    remediation:
+      retries: 3
+  interval: 1m
+  targetNamespace: garden
+  storageNamespace: garden
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  chart:
+    spec:
+      chart: {{ $k }}
+      version: {{ $v.version }}
+      sourceRef:
+        kind: HelmRepository
+        name: gardener-community-charts
+        namespace: yake
+      interval: 1m
+  values:
+    controller:
+      enabled: true
+  valuesFrom:
+    - kind: Secret
+      name: gardener-extension-{{ $k }}-values
+      optional: true
+{{- if (or $v.globallyEnabled $v.values) }}
+  postRenderers:
+{{- if $v.globallyEnabled }}
+    - kustomize:
+        patches:
+          - patch: |
+              - op: add
+                path: /spec/resources/0/globallyEnabled
+                value:
+                    true
+            target:
+              kind: ControllerRegistration
+              name: .*{{ $k }}.*
+{{- end }}
+{{- if $v.values  }}
+    - kustomize:
+        patches:
+{{- range $cur_k, $cur_v := $v.values }}
+          - patch: |
+              - op: add
+                path: /providerConfig/values/{{ $cur_k }}
+                value:
+                  {{- toYaml $cur_v | nindent 18 }}
+            target:
+              kind: ControllerDeployment
+              name: .*{{ $k }}.*
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,15 @@
+apiVersion: dns.gardener.cloud/v1alpha1
+kind: DNSProvider
+metadata:
+  annotations:
+    dns.gardener.cloud/class: base-dns-class
+  name: base-dns-provider
+  namespace: garden
+spec:
+  domains:
+    include:
+      - "{{ include "garden.ingressDomain" . }}"
+  secretRef:
+    name: base-dns-provider-secret
+    namespace: garden
+  type: {{ required "you need to set dns-provider.provider" (index .Values "dns-provider").provider }}

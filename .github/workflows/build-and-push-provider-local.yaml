@@ -29,4 +29,4 @@ jobs:
       - name: Build and push
         env:
           version: ${{ github.event.inputs.version }}
-        run: ./hack/ci/yake-local/build-extension-provider-local.sh
+        run: ./hack/yake-local/build-extension-provider-local.sh

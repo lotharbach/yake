@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gardener-dashboard-oidc
+  namespace: garden
+type: Opaque
+stringData:
+  client_id: dashboard
+  client_secret: F99D0142-AC16-4DB4-A23D-E3ECAA8FB717
+---
+apiVersion: operator.gardener.cloud/v1alpha1
+kind: Garden
+metadata:
+  name: yake-local
+spec:
+  runtimeCluster:
+    ingress:
+      controller:
+        kind: nginx
+      domains:
+       - local.gardener.cloud
+    networking:
+      nodes: 172.18.0.0/16
+      pods: 10.1.0.0/16
+      services: 10.2.0.0/16
+    settings:
+      topologyAwareRouting:
+        enabled: false
+      verticalPodAutoscaler:
+        enabled: true
+  virtualCluster:
+    controlPlane:
+      highAvailability: {}
+    dns:
+      domains:
+        - local.gardener.cloud
+    etcd:
+      events:
+        storage:
+          capacity: 10Gi
+      main:
+        storage:
+          capacity: 25Gi
+    gardener:
+      clusterIdentity: yake-local
+      gardenerDashboard:
+        oidcConfig:
+          additionalScopes: ["profile", "audience:server:client_id:dashboard", "audience:server:client_id:kube-kubectl"]
+          secretRef:
+            name: gardener-dashboard-oidc
+    kubernetes:
+      version: 1.26.1
+      kubeAPIServer:
+        oidcConfig:
+          caBundle: |
+            -----BEGIN CERTIFICATE-----
+            MIIBtDCCAVqgAwIBAgIRAP02sWFaLe9o+Jg2jMe+IJkwCgYIKoZIzj0EAwIwODEW
+            MBQGA1UEChMNZ2FyZGVuZXJsb2NhbDEeMBwGA1UEAxMVZ2FyZGVuZXJsb2NhbCBS
+            b290IENBMB4XDTIzMTExNjEzMjIxOFoXDTMzMTExMzEzMjIxOFowODEWMBQGA1UE
+            ChMNZ2FyZGVuZXJsb2NhbDEeMBwGA1UEAxMVZ2FyZGVuZXJsb2NhbCBSb290IENB
+            MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAESEM2wJI/rkMQMLxabcNdU/vyMbzJ
+            644dEv8pFBM4t/hTTLWNG0ZLcsmJyuNviscpdTtG0+9piuinbcscyRcwrqNFMEMw
+            DgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYDVR0OBBYEFOAb
+            DulbjRRqS8vCuDSpjJvXw4yAMAoGCCqGSM49BAMCA0gAMEUCIQD0PeiQDTZ+ZiZZ
+            ovQ/oj0kxnpg5PUNRpsJcDe7EOVXcAIgJ6EMO5F72mJX1wu1SmDvAHaFx7jeGF88
+            lvbmDTMI3zU=
+            -----END CERTIFICATE-----
+          issuerURL: https://identity.local.gardener.cloud/oidc
+          usernameClaim: email
+          groupsClaim: groups
+          clientID: kube-kubectl
+    maintenance:
+      timeWindow:
+        begin: 220000+0100
+        end: 230000+0100
+    networking:
+      services: 100.64.0.0/13
+

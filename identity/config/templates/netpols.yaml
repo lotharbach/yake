@@ -1,0 +1,89 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: virtual-garden-kube-apiserver-to-identity
+  namespace: garden
+spec:
+  egress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: identity
+          release: garden-identity
+  podSelector:
+    matchLabels:
+      app: kubernetes
+      role: apiserver
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: identity-from-virtual-garden-kube-apiserver
+  namespace: garden
+spec:
+  ingress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    from:
+    - podSelector:
+        matchLabels:
+          app: kubernetes
+          role: apiserver
+
+  podSelector:
+    matchLabels:
+      app: identity
+      release: garden-identity
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gardener-dashboard-to-identity
+  namespace: garden
+spec:
+  egress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    to:
+    - podSelector:
+        matchLabels:
+          app: identity
+          release: garden-identity
+  podSelector:
+    matchLabels:
+      app: gardener
+      role: dashboard
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: identity-from-gardener-dashboard
+  namespace: garden
+spec:
+  ingress:
+  - ports:
+    - port: 5556
+      protocol: TCP
+    from:
+    - podSelector:
+        matchLabels:
+          app: gardener
+          role: dashboard
+  podSelector:
+    matchLabels:
+      app: identity
+      release: garden-identity
+  policyTypes:
+  - Ingress
+---

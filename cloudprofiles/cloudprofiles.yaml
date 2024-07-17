@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: cloudprofiles
+  namespace: yake
+spec:
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  interval: 1m
+  targetNamespace: garden
+  storageNamespace: garden
+  dependsOn:
+  - name: cloudprofiles-config
+  chart:
+    spec:
+      chart: cloudprofiles
+      version: 0.7.10
+      sourceRef:
+        kind: HelmRepository
+        name: gardener-community-charts
+        namespace: yake
+      interval: 1m
+  install:
+    remediation:
+      retries: 3
+    createNamespace: true
+  valuesFrom:
+    - kind: Secret
+      name: cloudprofiles-yake-values
+      optional: false
+    - kind: Secret
+      name: cloudprofiles-values
+      optional: true

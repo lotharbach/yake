@@ -1,0 +1,121 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-knot-from-dns-management
+  namespace: garden
+spec:
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    to:
+    - podSelector:
+        matchLabels:
+          app: knot
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: default
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: external-dns-management
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-knot-from-cert-management
+  namespace: garden
+spec:
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    to:
+    - podSelector:
+        matchLabels:
+          app: knot
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: default
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-management
+  policyTypes:
+  - Egress
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-kube-dns-from-step-ca
+  namespace: garden
+spec:
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+    to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchExpressions:
+        - key: k8s-app
+          operator: In
+          values:
+          - kube-dns
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchExpressions:
+        - key: k8s-app
+          operator: In
+          values:
+          - node-local-dns
+    - ipBlock:
+        cidr: 10.2.0.10/32
+    - ipBlock:
+        cidr: 169.254.20.10/32
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: step-certificates
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-any-from-dashboard
+  namespace: garden
+spec:
+  egress:
+  - {}
+  podSelector:
+    matchLabels:
+      app: gardener
+      role: dashboard
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: egress-to-any-from-virtual-garden-kube-apiserver
+  namespace: garden
+spec:
+  egress:
+  - {}
+  podSelector:
+    matchLabels:
+      app: kubernetes
+      role: apiserver
+  policyTypes:
+  - Egress

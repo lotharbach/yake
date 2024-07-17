@@ -1,0 +1,22 @@
+{{- define "garden.apiDomain" -}}
+{{- (print (first (lookup "operator.gardener.cloud/v1alpha1" "Garden" "" .Values.garden.name).spec.virtualCluster.dns.domains)) }}
+{{- end -}}
+
+{{- define "istio.ip" -}}
+{{- range $k, $v := (lookup "v1" "Service" "virtual-garden-istio-ingress" "istio-ingressgateway").status.loadBalancer.ingress -}}
+- {{ $v.ip }}
+{{- end -}}
+{{- end -}}
+
+apiVersion: dns.gardener.cloud/v1alpha1
+kind: DNSEntry
+metadata:
+  annotations:
+    dns.gardener.cloud/class: base-dns-class
+  name: garden-api
+  namespace: garden
+spec:
+  dnsName: api.{{ include "garden.apiDomain" . }}
+  targets:
+{{ include "istio.ip" . | indent 2 }}
+  ttl: 600

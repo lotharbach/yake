@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: yake-flux
+  namespace: {{ .Release.Namespace }}
+spec:
+  install:
+    remediation:
+      retries: 3
+  interval: {{ .Values.yake.interval }}
+  chart:
+    spec:
+      chart: yake-flux/chart
+      reconcileStrategy: Revision
+      sourceRef:
+{{ $.Values.yake.sourceRef | toYaml | indent 8 }}
+      interval: {{ .Values.yake.interval }}
+  driftDetection:
+    mode: enabled
+  valuesFrom:
+    - kind: Secret
+      name: yake-config
+      optional: false

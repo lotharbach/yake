@@ -1,0 +1,99 @@
+{{- range $k, $v := (index .Values "gardener-extensions") }}
+{{- if not (eq $k "enabled") }}
+{{ $extShortName := trimPrefix "provider-" $k }}
+{{- if $v.enabled }}
+{{- if ($v.admission).enabled }}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gardener-extension-admission-{{ $k }}-application
+  namespace: yake
+spec:
+  kubeConfig:
+    secretRef:
+      name: gardener-internal
+      key: kubeconfig
+  interval: 1m
+  timeout: 30m
+  targetNamespace: garden
+  storageNamespace: garden
+  chart:
+    spec:
+      chart: {{ $k }}
+      version: {{ $v.version }}
+      sourceRef:
+        kind: HelmRepository
+        name: gardener-community-charts
+        namespace: yake
+      interval: 1m
+  install:
+    remediation:
+      retries: 3
+    createNamespace: true
+  values:
+    global:
+{{ include "admission.values" . | indent 6 }}
+    gardener-extension-admission-{{ $extShortName }}:
+      enabled: true
+      application:
+        enabled: true
+  valuesFrom:
+    - kind: Secret
+      name: gardener-extension-admission-{{ $k }}-admission-values
+      optional: true
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gardener-extension-admission-{{ $k }}-runtime
+  namespace: yake
+spec:
+  interval: 1m
+  targetNamespace: garden
+  storageNamespace: garden
+  chart:
+    spec:
+      chart: {{ $k }}
+      version: {{ $v.version }}
+      sourceRef:
+        kind: HelmRepository
+        name: gardener-community-charts
+        namespace: yake
+      interval: 1m
+  dependsOn:
+    - name: gardener-extension-admission-{{ $k }}-application
+  install:
+    remediation:
+      retries: 3
+    createNamespace: true
+  postRenderers:
+    - kustomize:
+        patches:
+          - patch: |
+              - op: replace
+                path: /spec/template/spec/automountServiceAccountToken
+                value: true
+            target:
+              kind: Deployment
+              name: gardener-extension-admission-{{ $extShortName }}
+  values:
+    global:
+{{ include "admission.values" $v | indent 6 }}
+    gardener-extension-admission-{{ $extShortName }}:
+      enabled: true
+      runtime:
+        enabled: true
+  valuesFrom:
+    - kind: Secret
+      name: gardener-internal
+      valuesKey: kubeconfig
+      targetPath: global.kubeconfig
+      optional: false
+    - kind: Secret
+      name: gardener-extension-admission-{{ $k }}-admission-values
+      optional: true
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

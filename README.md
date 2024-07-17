@@ -20,12 +20,11 @@ to keep the repository as self-contained as possible.
 ## Getting started locally
 
 If you just want to try out YAKE and evaluate whether it is the right tool for you, you are invited
-to set up a local installation via the resources provided in `hack/ci/yake-local`. Just go ahead
+to set up a local installation via the resources provided in `hack/yake-local`. Just go ahead
 and execute
 
 ```sh
-cd hack/ci/yake-local
-./work.sh
+./hack/yake-local/work.sh
 ```
 
 This will set up a KinD Kubernetes cluster on you local machine and install YAKE into it. You can watch the installation by watching the Flux resources `Kustomization`s and `HelmReleases`. Of course, you could also have a look at `Deployment`s and `Pod`s in order to see which processes are started.
@@ -45,7 +44,7 @@ into meaningful commits, push the branch to the upstream repository, and file a 
 # Production Deployments
 
 For production deployments you can have a look at the local setup first and adjust the configuration
-files in `hack/ci/yake-local/config` to your needs. You will not need to install [Knot](https://www.knot-dns.cz/)
+files in `hack/yake-local/yake-config.secret.yaml` to your needs. You will not need to install [Knot](https://www.knot-dns.cz/)
 and [Step-ca](https://smallstep.com/docs/step-ca/) as done in the local environment. However, you
 will need a domain and configured cloud dns provider for a real deployment. Please checkout the
 documentation for further information.

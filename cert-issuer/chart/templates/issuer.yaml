@@ -1,0 +1,10 @@
+apiVersion: cert.gardener.cloud/v1alpha1
+kind: Issuer
+metadata:
+  name: default-issuer
+  namespace: garden
+  annotations:
+    cert.gardener.cloud/class: base-cert-class
+spec:
+{{ required "please provide an issuer spec in cert-issuer.issuer" (index .Values "cert-issuer").issuer  | toYaml | indent 2 }}
+

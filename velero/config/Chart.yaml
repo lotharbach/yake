@@ -1,0 +1,6 @@
+apiVersion: v2
+name: velero-config
+description: A Helm chart for yake
+
+type: application
+version: 0.0.1

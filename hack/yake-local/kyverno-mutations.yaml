@@ -1,0 +1,62 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: dashboard-custom-ca
+spec:
+  rules:
+    - name: pCM1
+      match:
+        any:
+        - resources:
+            namespaces:
+              - garden
+            kinds:
+              - Pod
+            selector:
+              matchLabels:
+                app: gardener
+                role: dashboard
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - (name): "*"
+                env:
+                - name: OIDC_CA
+                  valueFrom:
+                    configMapKeyRef:
+                      key: root_ca.crt
+                      name: step-certificates-certs
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: cert-management-custom-ca
+spec:
+  rules:
+    - name: pCM1
+      match:
+        any:
+        - resources:
+            namespaces:
+              - garden
+            kinds:
+              - Pod
+            selector:
+              matchLabels:
+                app.kubernetes.io/instance: garden-cert-management
+                app.kubernetes.io/name: cert-management
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - (name): "*"
+                volumeMounts:
+                  - mountPath: /etc/ssl/certs/step-ca.crt
+                    name: step-ca
+                    subPath: root_ca.crt
+            volumes:
+              - configMap:
+                  defaultMode: 420
+                  name: step-certificates-certs
+                name: step-ca

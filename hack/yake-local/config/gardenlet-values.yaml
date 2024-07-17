@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gardenlet-values
+  namespace: yake
+type: Opaque
+stringData:
+  values.yaml: |-
+    replicaCount: 1
+    config:
+      featureGates:
+        HVPA: true
+      seedConfig:
+        metadata:
+          name: initial
+        spec:
+          ingress:
+            domain: local.gardener.cloud
+            controller:
+              kind: nginx
+          dns:
+            provider:
+              type: local
+              secretRef:
+                name: internal-domain-local-gardener-cloud
+                namespace: garden
+          networks:
+            nodes: 172.18.0.0/16
+            pods: 10.1.0.0/16
+            services: 10.2.0.0/16
+            shootDefaults:
+              pods: 10.3.0.0/16
+              services: 10.4.0.0/16
+          provider:
+            region: local
+            type: local
+          settings:
+            excessCapacityReservation:
+              enabled: false
+            verticalPodAutoscaler:
+              enabled: true

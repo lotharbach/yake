@@ -1,0 +1,28 @@
+{{- define "garden.ingressDomain" -}}
+{{- (print (first (lookup "operator.gardener.cloud/v1alpha1" "Garden" "" "yake-local").spec.runtimeCluster.ingress.domains)) }}
+{{- end -}}
+
+apiVersion: cert.gardener.cloud/v1alpha1
+kind: Certificate
+metadata:
+  annotations:
+    cert.gardener.cloud/class: base-cert-class
+  name: wildcard-certificate
+  namespace: garden
+spec:
+  commonName: "*.{{ include "garden.ingressDomain" . }}"
+  issuerRef:
+    name: default-issuer
+    namespace: garden
+  secretRef:
+    name: wildcard-certificate
+    namespace: garden
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    gardener.cloud/role: controlplane-cert
+  name: wildcard-certificate
+  namespace: garden
+type: Opaque
