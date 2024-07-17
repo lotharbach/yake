@@ -1,4 +1,4 @@
-{{- range $k, $v := (index .Values "gardener-extensions") }}
+{{- range $k, $v := (index .Values "gardener-extensions.enabled") }}
 {{- if not (eq $k "enabled") }}
 {{ $extShortName := trimPrefix "provider-" $k }}
 {{- if $v.enabled }}

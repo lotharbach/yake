@@ -25,5 +25,5 @@ spec:
       name: yake-config
       optional: false
     - kind: Secret
-      name: gardener-extension-values
+      name: gardener-extensions-values
       optional: true
